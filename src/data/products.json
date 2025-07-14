@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "name": "75\" LED Smart TV",
+    "category": "Electronics",
+    "image": "/api/placeholder/300/200",
+    "price": 649.99,
+    "carbonFootprint": 45.2,
+    "description": "4K Ultra HD Smart TV with streaming capabilities",
+    "alternatives": [2]
+  },
+  {
+    "id": 2,
+    "name": "65\" Energy Star TV",
+    "category": "Electronics", 
+    "image": "/api/placeholder/300/200",
+    "price": 549.99,
+    "carbonFootprint": 28.1,
+    "description": "Energy efficient 4K TV with 40% lower emissions",
+    "alternatives": []
+  },
+  {
+    "id": 3,
+    "name": "Conventional Apples (3 lbs)",
+    "category": "Groceries",
+    "image": "/api/placeholder/300/200", 
+    "price": 4.99,
+    "carbonFootprint": 2.8,
+    "description": "Fresh red apples from conventional farming",
+    "alternatives": [4]
+  },
+  {
+    "id": 4,
+    "name": "Organic Local Apples (3 lbs)",
+    "category": "Groceries",
+    "image": "/api/placeholder/300/200",
+    "price": 6.99,
+    "carbonFootprint": 1.4,
+    "description": "Locally grown organic apples with 50% lower carbon footprint",
+    "alternatives": []
+  },
+  {
+    "id": 5,
+    "name": "Ground Beef (1 lb)",
+    "category": "Groceries",
+    "image": "/api/placeholder/300/200",
+    "price": 5.99,
+    "carbonFootprint": 14.8,
+    "description": "80/20 ground beef from conventional farming",
+    "alternatives": [6, 7]
+  },
+  {
+    "id": 6,
+    "name": "Plant-Based Ground (1 lb)",
+    "category": "Groceries",
+    "image": "/api/placeholder/300/200",
+    "price": 6.99,
+    "carbonFootprint": 2.1,
+    "description": "Plant-based ground meat alternative with 85% lower emissions",
+    "alternatives": []
+  },
+  {
+    "id": 7,
+    "name": "Grass-Fed Beef (1 lb)",
+    "category": "Groceries", 
+    "image": "/api/placeholder/300/200",
+    "price": 8.99,
+    "carbonFootprint": 9.2,
+    "description": "Grass-fed beef with 38% lower carbon footprint",
+    "alternatives": []
+  },
+  {
+    "id": 8,
+    "name": "Standard Laundry Detergent",
+    "category": "Household",
+    "image": "/api/placeholder/300/200",
+    "price": 12.99,
+    "carbonFootprint": 3.5,
+    "description": "Regular strength liquid laundry detergent",
+    "alternatives": [9]
+  },
+  {
+    "id": 9,
+    "name": "Eco-Friendly Detergent",
+    "category": "Household",
+    "image": "/api/placeholder/300/200", 
+    "price": 14.99,
+    "carbonFootprint": 1.8,
+    "description": "Plant-based concentrated detergent with biodegradable formula",
+    "alternatives": []
+  },
+  {
+    "id": 10,
+    "name": "Disposable Water Bottles (24 pack)",
+    "category": "Beverages",
+    "image": "/api/placeholder/300/200",
+    "price": 3.99,
+    "carbonFootprint": 12.4,
+    "description": "Single-use plastic water bottles",
+    "alternatives": [11]
+  },
+  {
+    "id": 11,
+    "name": "Reusable Water Bottle",
+    "category": "Beverages",
+    "image": "/api/placeholder/300/200",
+    "price": 19.99,
+    "carbonFootprint": 2.8,
+    "description": "Stainless steel reusable bottle - use 1000+ times",
+    "alternatives": []
+  },
+  {
+    "id": 12,
+    "name": "Gas-Powered Lawn Mower",
+    "category": "Outdoor",
+    "image": "/api/placeholder/300/200",
+    "price": 299.99,
+    "carbonFootprint": 67.3,
+    "description": "Self-propelled gas lawn mower",
+    "alternatives": [13]
+  },
+  {
+    "id": 13,
+    "name": "Electric Lawn Mower",
+    "category": "Outdoor",
+    "image": "/api/placeholder/300/200",
+    "price": 349.99,
+    "carbonFootprint": 18.9,
+    "description": "Battery-powered electric mower with 72% lower emissions",
+    "alternatives": []
+  }
+]
