@@ -2,10 +2,25 @@ import { useState, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { ComparisonModal } from "@/components/ComparisonModal";
+import { ProductDetailModal } from "@/components/ProductDetailModal";
+import { CartSidebar } from "@/components/CartSidebar";
+import { Dashboard } from "@/components/Dashboard";
+import { EducationHub } from "@/components/EducationHub";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Leaf, BarChart3, ShoppingCart, TreePine } from "lucide-react";
+import { useCartStore } from "@/stores/cartStore";
+import { 
+  Leaf, 
+  BarChart3, 
+  ShoppingCart, 
+  TreePine,
+  Home,
+  BookOpen,
+  TrendingUp,
+  Users,
+  Target
+} from "lucide-react";
 import productsData from "@/data/products.json";
 
 interface Product {
@@ -26,7 +41,13 @@ const Index = () => {
   const [carbonFilter, setCarbonFilter] = useState<string | null>(null);
   const [comparisonProduct, setComparisonProduct] = useState<Product | null>(null);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
+  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [currentPage, setCurrentPage] = useState<"shop" | "dashboard" | "education">("shop");
+  
+  const { getTotalItems } = useCartStore();
+  const cartItems = getTotalItems();
 
   // Get unique categories
   const availableCategories = useMemo(
@@ -78,6 +99,11 @@ const Index = () => {
     }
   };
 
+  const handleProductClick = (product: Product) => {
+    setDetailProduct(product);
+    setIsDetailOpen(true);
+  };
+
   // Calculate total potential savings
   const totalSavings = useMemo(() => {
     return products.reduce((total, product) => {
@@ -91,6 +117,158 @@ const Index = () => {
       return total;
     }, 0);
   }, [products]);
+
+  const navigationItems = [
+    { id: "shop", label: "Shop", icon: <Home className="w-4 h-4" /> },
+    { id: "dashboard", label: "Dashboard", icon: <TrendingUp className="w-4 h-4" /> },
+    { id: "education", label: "Learn", icon: <BookOpen className="w-4 h-4" /> },
+  ];
+
+  const renderShopPage = () => (
+    <main className="container mx-auto px-4 py-8">
+      {/* Hero Section */}
+      <div className="text-center mb-12">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
+            Discover the Carbon Impact of Your Shopping
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8">
+            Make informed choices with real-time carbon footprint data and eco-friendly alternatives for every product.
+          </p>
+          
+          {/* Stats Cards */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="p-3 bg-success/10 rounded-full w-fit mx-auto mb-3">
+                  <Leaf className="w-6 h-6 text-success" />
+                </div>
+                <h3 className="font-semibold text-lg">{products.length}</h3>
+                <p className="text-sm text-muted-foreground">Eco-Analyzed Products</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="p-3 bg-accent/10 rounded-full w-fit mx-auto mb-3">
+                  <BarChart3 className="w-6 h-6 text-accent" />
+                </div>
+                <h3 className="font-semibold text-lg">{availableCategories.length}</h3>
+                <p className="text-sm text-muted-foreground">Product Categories</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-3">
+                  <Target className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg">
+                  {products.filter(p => p.alternatives.length > 0).length}
+                </h3>
+                <p className="text-sm text-muted-foreground">Green Alternatives</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-8">
+        <SearchBar
+          onSearch={setSearchQuery}
+          onCategoryFilter={setSelectedCategories}
+          onCarbonFilter={setCarbonFilter}
+          selectedCategories={selectedCategories}
+          carbonFilter={carbonFilter}
+          availableCategories={availableCategories}
+        />
+      </div>
+
+      {/* Results Summary */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          <h3 className="text-lg font-semibold">
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} Found
+          </h3>
+          {(searchQuery || selectedCategories.length > 0 || carbonFilter) && (
+            <Badge variant="secondary">
+              Filtered Results
+            </Badge>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Button
+            variant={viewMode === "grid" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setViewMode("grid")}
+          >
+            Grid
+          </Button>
+          <Button
+            variant={viewMode === "list" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setViewMode("list")}
+          >
+            List
+          </Button>
+        </div>
+      </div>
+
+      {/* Products Grid/List */}
+      <div className={`${
+        viewMode === "grid" 
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+          : "space-y-4"
+      }`}>
+        {filteredProducts.map((product) => (
+          <div key={product.id} onClick={() => handleProductClick(product)} className="cursor-pointer">
+            <ProductCard
+              product={product}
+              onCompare={handleCompare}
+              onViewAlternatives={handleViewAlternatives}
+              isCompactView={viewMode === "list"}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {filteredProducts.length === 0 && (
+        <div className="text-center py-16">
+          <div className="p-4 bg-muted/20 rounded-full w-fit mx-auto mb-4">
+            <ShoppingCart className="w-12 h-12 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2">No products found</h3>
+          <p className="text-muted-foreground mb-4">
+            Try adjusting your search terms or filters
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedCategories([]);
+              setCarbonFilter(null);
+            }}
+          >
+            Clear All Filters
+          </Button>
+        </div>
+      )}
+    </main>
+  );
+
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case "dashboard":
+        return <Dashboard />;
+      case "education":
+        return <EducationHub />;
+      default:
+        return renderShopPage();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,154 +286,67 @@ const Index = () => {
               </div>
             </div>
             
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center space-x-2">
+              {navigationItems.map((item) => (
+                <Button
+                  key={item.id}
+                  variant={currentPage === item.id ? "default" : "ghost"}
+                  onClick={() => setCurrentPage(item.id as any)}
+                  className="flex items-center space-x-2"
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Button>
+              ))}
+            </nav>
+            
             <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="flex items-center space-x-2">
-                <Leaf className="w-4 h-4 text-success" />
-                <span>Potential Savings: {totalSavings.toFixed(1)} kg CO₂</span>
-              </Badge>
+              {currentPage === "shop" && (
+                <Badge variant="outline" className="flex items-center space-x-2">
+                  <Leaf className="w-4 h-4 text-success" />
+                  <span>Potential Savings: {totalSavings.toFixed(1)} kg CO₂</span>
+                </Badge>
+              )}
               
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                >
-                  Grid
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                >
-                  List
-                </Button>
-              </div>
+              <CartSidebar />
             </div>
           </div>
+          
+          {/* Mobile Navigation */}
+          <nav className="md:hidden flex items-center justify-center space-x-2 mt-4">
+            {navigationItems.map((item) => (
+              <Button
+                key={item.id}
+                variant={currentPage === item.id ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setCurrentPage(item.id as any)}
+                className="flex items-center space-x-1"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Button>
+            ))}
+          </nav>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Discover the Carbon Impact of Your Shopping
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Make informed choices with real-time carbon footprint data and eco-friendly alternatives for every product.
-            </p>
-            
-            {/* Stats Cards */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <div className="p-3 bg-success/10 rounded-full w-fit mx-auto mb-3">
-                    <Leaf className="w-6 h-6 text-success" />
-                  </div>
-                  <h3 className="font-semibold text-lg">{products.length}</h3>
-                  <p className="text-sm text-muted-foreground">Eco-Analyzed Products</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <div className="p-3 bg-accent/10 rounded-full w-fit mx-auto mb-3">
-                    <BarChart3 className="w-6 h-6 text-accent" />
-                  </div>
-                  <h3 className="font-semibold text-lg">{availableCategories.length}</h3>
-                  <p className="text-sm text-muted-foreground">Product Categories</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-3">
-                    <ShoppingCart className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg">
-                    {products.filter(p => p.alternatives.length > 0).length}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">Green Alternatives</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
+      {/* Page Content */}
+      {renderCurrentPage()}
 
-        {/* Search and Filters */}
-        <div className="mb-8">
-          <SearchBar
-            onSearch={setSearchQuery}
-            onCategoryFilter={setSelectedCategories}
-            onCarbonFilter={setCarbonFilter}
-            selectedCategories={selectedCategories}
-            carbonFilter={carbonFilter}
-            availableCategories={availableCategories}
-          />
-        </div>
-
-        {/* Results Summary */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-            <h3 className="text-lg font-semibold">
-              {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} Found
-            </h3>
-            {(searchQuery || selectedCategories.length > 0 || carbonFilter) && (
-              <Badge variant="secondary">
-                Filtered Results
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Products Grid/List */}
-        <div className={`${
-          viewMode === "grid" 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
-            : "space-y-4"
-        }`}>
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onCompare={handleCompare}
-              onViewAlternatives={handleViewAlternatives}
-              isCompactView={viewMode === "list"}
-            />
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-16">
-            <div className="p-4 bg-muted/20 rounded-full w-fit mx-auto mb-4">
-              <ShoppingCart className="w-12 h-12 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">No products found</h3>
-            <p className="text-muted-foreground mb-4">
-              Try adjusting your search terms or filters
-            </p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategories([]);
-                setCarbonFilter(null);
-              }}
-            >
-              Clear All Filters
-            </Button>
-          </div>
-        )}
-      </main>
-
-      {/* Comparison Modal */}
+      {/* Modals */}
       <ComparisonModal
         isOpen={isComparisonOpen}
         onClose={() => setIsComparisonOpen(false)}
         product={comparisonProduct}
         alternatives={comparisonProduct ? getAlternatives(comparisonProduct) : []}
+      />
+      
+      <ProductDetailModal
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        product={detailProduct}
+        alternatives={detailProduct ? getAlternatives(detailProduct) : []}
       />
     </div>
   );
